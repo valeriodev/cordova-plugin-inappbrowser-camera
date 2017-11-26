@@ -953,7 +953,9 @@ public class InAppBrowser extends CordovaPlugin {
             }
 		
 	    if(intent == null){
-	    	mUploadCallbackLollipop.onReceiveValue(mCapturedImageURI);
+		Uri[] result2 = new Uri[1];
+		result2[0] = mCapturedImageURI;
+	    	mUploadCallbackLollipop.onReceiveValue(result2);
 	    }
 	    else{
 		mUploadCallbackLollipop.onReceiveValue( WebChromeClient.FileChooserParams.parseResult(resultCode, intent)); 
