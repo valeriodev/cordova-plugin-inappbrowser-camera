@@ -960,7 +960,7 @@ public class InAppBrowser extends CordovaPlugin {
 		
 	    if(intent == null){
 		Uri[] result2 = null;
-		results2 = new Uri[]{Uri.parse(mCameraPhotoPath)};
+		result2 = new Uri[]{Uri.parse(mCameraPhotoPath)};
 	    	mUploadCallbackLollipop.onReceiveValue(result2);
 	    }
 	    else{
