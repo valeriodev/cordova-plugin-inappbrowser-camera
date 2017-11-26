@@ -28,6 +28,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -730,8 +732,35 @@ public class InAppBrowser extends CordovaPlugin {
                 inAppWebView.setId(Integer.valueOf(6));
                 // File Chooser Implemented ChromeClient
                 inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView) {
-                    // For Android 5.0+
-                    public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
+                    
+		
+		    // For Android 5.0+
+		    public boolean onShowFileChooser_old (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
+		    {
+			LOG.d(LOG_TAG, "File Chooser 5.0+ valeriodev");
+			// If callback exists, finish it.
+			if(mUploadCallbackLollipop != null) {
+			    mUploadCallbackLollipop.onReceiveValue(null);
+			}
+			mUploadCallbackLollipop = filePathCallback;
+
+			 // Create File Chooser Intent
+                        Intent content = new Intent(Intent.ACTION_GET_CONTENT);
+                        content.addCategory(Intent.CATEGORY_OPENABLE);
+			content.setType("image/*");
+			
+			Intent chooserIntent = Intent.createChooser(content, "Select File");
+			final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[] { captureIntent });
+			
+			// Run cordova startActivityForResult
+			cordova.startActivityForResult(InAppBrowser.this, chooserIntent, FILECHOOSER_REQUESTCODE_LOLLIPOP);
+			return true;
+		    }
+			
+			
+		   // For Android 5.0+
+                    public boolean onShowFileChooser_old (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
                     {
                         LOG.d(LOG_TAG, "File Chooser 5.0+");
                         // If callback exists, finish it.
