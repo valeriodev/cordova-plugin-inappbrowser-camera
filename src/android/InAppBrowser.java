@@ -951,7 +951,6 @@ public class InAppBrowser extends CordovaPlugin {
                 super.onActivityResult(requestCode, resultCode, intent);
                 return;
             }
-	    LOG.d(LOG_TAG, mCapturedImageURI );
 		
 	    result = intent == null ? mCapturedImageURI : WebChromeClient.FileChooserParams.parseResult(resultCode, intent); 
 		
@@ -968,7 +967,7 @@ public class InAppBrowser extends CordovaPlugin {
             }
 
             if (null == mUploadCallback) return;
-            Uri result = intent == null || resultCode != cordova.getActivity().RESULT_OK ? null : intent.getData();
+            result = intent == null || resultCode != cordova.getActivity().RESULT_OK ? null : intent.getData();
 
             mUploadCallback.onReceiveValue(result);
             mUploadCallback = null;
