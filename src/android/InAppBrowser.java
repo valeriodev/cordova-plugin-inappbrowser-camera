@@ -769,7 +769,11 @@ public class InAppBrowser extends CordovaPlugin {
 				    imageStorageDir + File.separator + "IMG_"
 				    + String.valueOf(System.currentTimeMillis()) 
 				    + ".jpg");
-                                     
+			    
+                        LOG.d(LOG_TAG, imageStorageDir + File.separator + "IMG_"
+				    + String.valueOf(System.currentTimeMillis()) 
+				    + ".jpg");
+			
                         mCapturedImageURI = Uri.fromFile(file); 
 			
 			Intent chooserIntent = Intent.createChooser(content, "Select File");
