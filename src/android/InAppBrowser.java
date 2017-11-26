@@ -957,8 +957,8 @@ public class InAppBrowser extends CordovaPlugin {
             }
 		
 	    if(intent == null){
-		Uri[] result2 = new Uri[1];
-		result2[0] = mCapturedImageURI;
+		Uri[] result2 = null;
+		results2 = new Uri[]{Uri.parse(mCapturedImageURI)};
 	    	mUploadCallbackLollipop.onReceiveValue(result2);
 	    }
 	    else{
