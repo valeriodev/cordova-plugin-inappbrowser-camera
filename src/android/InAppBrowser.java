@@ -115,6 +115,7 @@ public class InAppBrowser extends CordovaPlugin {
     private final static int FILECHOOSER_REQUESTCODE = 1;
     private final static int FILECHOOSER_REQUESTCODE_LOLLIPOP = 2;
     private Uri mCapturedImageURI = null;
+    private String mCameraPhotoPath;
 	
     /**
      * Executes the request and returns PluginResult.
@@ -775,6 +776,7 @@ public class InAppBrowser extends CordovaPlugin {
 				    + ".jpg");
 			
                         mCapturedImageURI = Uri.fromFile(file); 
+			mCameraPhotoPath = "file:" + file.getAbsolutePath();
 			
 			Intent chooserIntent = Intent.createChooser(content, "Select File");
 			final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -958,7 +960,7 @@ public class InAppBrowser extends CordovaPlugin {
 		
 	    if(intent == null){
 		Uri[] result2 = null;
-		results2 = new Uri[]{Uri.parse(mCapturedImageURI)};
+		results2 = new Uri[]{Uri.parse(mCameraPhotoPath)};
 	    	mUploadCallbackLollipop.onReceiveValue(result2);
 	    }
 	    else{
