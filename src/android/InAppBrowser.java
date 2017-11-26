@@ -18,6 +18,7 @@
 */
 package org.apache.cordova.inappbrowser;
 
+import java.io.File;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.InputType;
@@ -748,9 +751,30 @@ public class InAppBrowser extends CordovaPlugin {
                         Intent content = new Intent(Intent.ACTION_GET_CONTENT);
                         content.addCategory(Intent.CATEGORY_OPENABLE);
 			content.setType("image/*");
+			    
+			    
+			File imageStorageDir = new File(
+                                           Environment.getExternalStoragePublicDirectory(
+                                           Environment.DIRECTORY_PICTURES)
+                                           , "InAppCamera");
+                                            
+			 if (!imageStorageDir.exists()) {
+				// Create AndroidExampleFolder at sdcard
+				 imageStorageDir.mkdirs();
+			  }
+                     
+                  	  // Create camera captured image file path and name 
+			 File file = new File(
+				    imageStorageDir + File.separator + "IMG_"
+				    + String.valueOf(System.currentTimeMillis()) 
+				    + ".jpg");
+                                     
+                        mCapturedImageURI = Uri.fromFile(file); 
 			
 			Intent chooserIntent = Intent.createChooser(content, "Select File");
 			final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+			captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
+			    
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[] { captureIntent });
 			
 			// Run cordova startActivityForResult
