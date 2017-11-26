@@ -735,7 +735,7 @@ public class InAppBrowser extends CordovaPlugin {
                     
 		
 		    // For Android 5.0+
-		    public boolean onShowFileChooser_old (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
+		    public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
 		    {
 			LOG.d(LOG_TAG, "File Chooser 5.0+ valeriodev");
 			// If callback exists, finish it.
