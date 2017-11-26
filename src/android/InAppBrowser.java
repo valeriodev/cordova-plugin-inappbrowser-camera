@@ -942,6 +942,8 @@ public class InAppBrowser extends CordovaPlugin {
      */
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         // For Android >= 5.0
+	Uri result=null;
+	    
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             LOG.d(LOG_TAG, "onActivityResult (For Android >= 5.0)");
             // If RequestCode or Callback is Invalid
@@ -949,7 +951,11 @@ public class InAppBrowser extends CordovaPlugin {
                 super.onActivityResult(requestCode, resultCode, intent);
                 return;
             }
-            mUploadCallbackLollipop.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+	    LOG.d(LOG_TAG, mCapturedImageURI );
+		
+	    result = intent == null ? mCapturedImageURI : WebChromeClient.FileChooserParams.parseResult(resultCode, intent); 
+		
+            mUploadCallbackLollipop.onReceiveValue(result);
             mUploadCallbackLollipop = null;
         }
         // For Android < 5.0
