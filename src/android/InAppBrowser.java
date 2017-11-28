@@ -755,7 +755,7 @@ public class InAppBrowser extends CordovaPlugin {
 			mFilePathCallback = filePath;
 
 			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+			//if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 			    // Create the File where the photo should go
 			    File photoFile = null;
 			    try {
@@ -774,7 +774,7 @@ public class InAppBrowser extends CordovaPlugin {
 			    } else {
 				takePictureIntent = null;
 			    }
-			}
+			//}
 
 			Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
 			contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -973,17 +973,13 @@ public class InAppBrowser extends CordovaPlugin {
     }
 	
 	private File createImageFile() throws IOException {
-	    // Create an image file name
-		
-	       String imageFileName =  "IMG_"
+	    // Create an image file name";
+ 		File file = new File(
+				    imageStorageDir + File.separator + "IMG_"
 				    + String.valueOf(System.currentTimeMillis()) 
-				    + "_";
+				    + ".jpg");
 
-
-		    java.io.File xmlFile = new java.io.File((getBaseContext()
-		    .getApplicationContext().getFileStreamPath("FileName.xml")
-		    .getPath()));
-	    return xmlFile;
+	    return file;
 	}
 	
 	
@@ -1051,40 +1047,21 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mFilePathCallback.onReceiveValue(results);
         mFilePathCallback = null;
 
-    } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-        if (requestCode != FILECHOOSER_RESULTCODE || mUploadMessage == null) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-
-        if (requestCode == FILECHOOSER_RESULTCODE) {
-
-            if (null == this.mUploadMessage) {
+    } 
+	else {
+            LOG.d(LOG_TAG, "onActivityResult (For Android < 5.0)");
+            // If RequestCode or Callback is Invalid
+            if(requestCode != FILECHOOSER_REQUESTCODE || mUploadCallback == null) {
+                super.onActivityResult(requestCode, resultCode, intent);
                 return;
-
             }
 
-            Uri result = null;
+            if (null == mUploadCallback) return;
+            result = intent == null || resultCode != cordova.getActivity().RESULT_OK ? null : intent.getData();
 
-            try {
-                if (resultCode != Activity.RESULT_OK) {
-
-                    result = null;
-
-                } else {
-
-                    // retrieve from the private variable if the intent is null
-                    result = data == null ? mCapturedImageURI : data.getData();
-                }
-            } catch (Exception e) {
-		     LOG.d(LOG_TAG, "onActivityResult Exception");
-            }
-
-            mUploadMessage.onReceiveValue(result);
-            mUploadMessage = null;
-
+            mUploadCallback.onReceiveValue(result);
+            mUploadCallback = null;
         }
-    }
 
     return;
 }
