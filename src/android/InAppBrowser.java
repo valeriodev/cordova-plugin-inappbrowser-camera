@@ -982,10 +982,14 @@ public class InAppBrowser extends CordovaPlugin {
 		imageStorageDir.mkdirs();
 				
  		File file = new File(
-				    imageStorageDir.getAbsolutePath() + File.separator + "IMG_"
+				    imageStorageDir.getAbsolutePath() + File.separator + "CAZZ_"
 				    + String.valueOf(System.currentTimeMillis()) 
 				    + ".jpg");
-
+		
+		LOG.d(LOG_TAG, "Creo cazz " + imageStorageDir.getAbsolutePath() + File.separator + "CAZZ_"
+				    + String.valueOf(System.currentTimeMillis()) 
+				    + ".jpg");
+		
 	    return file;
 	}
 	
