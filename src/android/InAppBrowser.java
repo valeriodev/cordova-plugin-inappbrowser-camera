@@ -19,6 +19,7 @@
 package org.apache.cordova.inappbrowser;
 
 import java.io.File;
+import java.io.IOException;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -56,6 +57,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.content.pm.PackageManager;
+import android.app.Activity;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
@@ -760,7 +763,7 @@ public class InAppBrowser extends CordovaPlugin {
 				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
 			    } catch (IOException ex) {
 				// Error occurred while creating the File
-				Log.e(TAG, "Unable to create Image File", ex);
+				Log.e(LOG_TAG, "Unable to create Image File", ex);
 			    }
 
 			    // Continue only if the File was successfully created
@@ -789,7 +792,7 @@ public class InAppBrowser extends CordovaPlugin {
 			chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-			startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+			startActivityForResult(chooserIntent, FILECHOOSER_REQUESTCODE_LOLLIPOP);
 
 			return true;
 
@@ -971,8 +974,10 @@ public class InAppBrowser extends CordovaPlugin {
 	
 	private File createImageFile() throws IOException {
 	    // Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-	       String imageFileName = "JPEG_" + timeStamp + "_";
+		
+	       String imageFileName =  "IMG_"
+				    + String.valueOf(System.currentTimeMillis()) 
+				    + "_";
 
 
 		    java.io.File xmlFile = new java.io.File((getBaseContext()
@@ -1021,7 +1026,7 @@ public class InAppBrowser extends CordovaPlugin {
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-        if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
+        if (requestCode != FILECHOOSER_REQUESTCODE_LOLLIPOP || mFilePathCallback == null) {
             super.onActivityResult(requestCode, resultCode, data);
             return;
         }
@@ -1062,7 +1067,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
             Uri result = null;
 
             try {
-                if (resultCode != RESULT_OK) {
+                if (resultCode != Activity.RESULT_OK) {
 
                     result = null;
 
