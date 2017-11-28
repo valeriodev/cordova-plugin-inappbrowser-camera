@@ -763,7 +763,7 @@ public class InAppBrowser extends CordovaPlugin {
 				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
 			    } catch (IOException ex) {
 				// Error occurred while creating the File
-				Log.e(LOG_TAG, "Unable to create Image File", ex);
+				Log.d(LOG_TAG, "Unable to create Image File");
 			    }
 
 			    // Continue only if the File was successfully created
@@ -792,7 +792,7 @@ public class InAppBrowser extends CordovaPlugin {
 			chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-			startActivityForResult(chooserIntent, FILECHOOSER_REQUESTCODE_LOLLIPOP);
+			cordova.startActivityForResult(InAppBrowser.this, chooserIntent, FILECHOOSER_REQUESTCODE_LOLLIPOP);
 
 			return true;
 
@@ -974,6 +974,17 @@ public class InAppBrowser extends CordovaPlugin {
 	
 	private File createImageFile() throws IOException {
 	    // Create an image file name";
+		
+		File imageStorageDir = new File(
+                                           Environment.getExternalStoragePublicDirectory(
+                                           Environment.DIRECTORY_PICTURES)
+                                           , "InAppCamera");
+                                            
+			 if (!imageStorageDir.exists()) {
+				// Create AndroidExampleFolder at sdcard
+				 imageStorageDir.mkdirs();
+			  }
+		
  		File file = new File(
 				    imageStorageDir + File.separator + "IMG_"
 				    + String.valueOf(System.currentTimeMillis()) 
@@ -1052,12 +1063,12 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
             LOG.d(LOG_TAG, "onActivityResult (For Android < 5.0)");
             // If RequestCode or Callback is Invalid
             if(requestCode != FILECHOOSER_REQUESTCODE || mUploadCallback == null) {
-                super.onActivityResult(requestCode, resultCode, intent);
+                super.onActivityResult(requestCode, resultCode, data);
                 return;
             }
 
             if (null == mUploadCallback) return;
-            result = intent == null || resultCode != cordova.getActivity().RESULT_OK ? null : intent.getData();
+            result = data == null || resultCode != cordova.getActivity().RESULT_OK ? null : data.getData();
 
             mUploadCallback.onReceiveValue(result);
             mUploadCallback = null;
