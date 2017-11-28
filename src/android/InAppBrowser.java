@@ -768,7 +768,7 @@ public class InAppBrowser extends CordovaPlugin {
 
 			    // Continue only if the File was successfully created
 			    if (photoFile != null) {
-				mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
+				mCameraPhotoPath = "file://" + photoFile.getAbsolutePath();
 				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
 					Uri.fromFile(photoFile));
 			    } else {
@@ -1051,7 +1051,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			 LOG.d(LOG_TAG, "There is no data take from photo");
 			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
-			mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
+			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
