@@ -1031,11 +1031,11 @@ public class InAppBrowser extends CordovaPlugin {
 	
 	@Override
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	
+	 LOG.d(LOG_TAG, "onActivityResult");
 	Uri result=null;
 	
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
+	 LOG.d(LOG_TAG, "(For Android < 5.0)");
         if (requestCode != FILECHOOSER_REQUESTCODE_LOLLIPOP || mFilePathCallback == null) {
             super.onActivityResult(requestCode, resultCode, data);
             return;
@@ -1045,12 +1045,16 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         // Check that the response is a good one
         if (resultCode == Activity.RESULT_OK) {
+		 LOG.d(LOG_TAG, "Activity RESULT OK");
 		if (data == null || data.getDataString() == null) {
 		    // If there is not data, then we may have taken a photo
+			 LOG.d(LOG_TAG, "There is no data take from photo");
+			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
 			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
+			 LOG.d(LOG_TAG, "Else getDataString");
 		    String dataString = data.getDataString();
 		    if (dataString != null) {
 			results = new Uri[]{Uri.parse(dataString)};
