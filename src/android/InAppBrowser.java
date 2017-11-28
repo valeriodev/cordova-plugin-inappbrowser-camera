@@ -768,7 +768,8 @@ public class InAppBrowser extends CordovaPlugin {
 
 			    // Continue only if the File was successfully created
 			    if (photoFile != null) {
-				mCameraPhotoPath = "file://" + photoFile.getAbsolutePath();
+				//mCameraPhotoPath = "file://" + photoFile.getAbsolutePath();
+				mCameraPhotoPath = photoFile.getAbsolutePath();
 				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
 					Uri.fromFile(photoFile));
 			    } else {
@@ -1052,33 +1053,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
 			    
-		        File file = new File(mCameraPhotoPath);
-			if(file.exists())      
-				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
-			else
-				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
-			
-			mCameraPhotoPath = mCameraPhotoPath.replace("file://", "file:");
+			//mCameraPhotoPath = mCameraPhotoPath.replace("file://", "");
 			    
-			 file = new File(mCameraPhotoPath);
-			if(file.exists())      
-				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
-			else
-				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
-			    
-		
-			      
-			mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			    
-			 file = new File(mCameraPhotoPath);
-			if(file.exists())      
-				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
-			else
-				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
-			    
-			mCameraPhotoPath = mCameraPhotoPath.replace("file:", "file://");
-			    
-			 file = new File(mCameraPhotoPath);
+			File file = new File(mCameraPhotoPath);
 			if(file.exists())      
 				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
 			else
@@ -1087,7 +1064,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			  
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+			results = new Uri[]{Uri.parse(Uri.fromFile(file))};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
