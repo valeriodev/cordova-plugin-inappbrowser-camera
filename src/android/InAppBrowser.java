@@ -763,7 +763,7 @@ public class InAppBrowser extends CordovaPlugin {
 				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
 			    } catch (IOException ex) {
 				// Error occurred while creating the File
-				LOG.d(LOG_TAG, "Unable to create Image File");
+				LOG.d(LOG_TAG, "cazzz");
 			    }
 
 			    // Continue only if the File was successfully created
@@ -975,18 +975,14 @@ public class InAppBrowser extends CordovaPlugin {
 	private File createImageFile() throws IOException {
 	    // Create an image file name";
 		
-		File imageStorageDir = new File(
-                                           Environment.getExternalStoragePublicDirectory(
-                                           Environment.DIRECTORY_PICTURES)
-                                           , "InAppCamera");
+		File imageStorageDir = Environment.getExternalStoragePublicDirectory(
+                                           Environment.DIRECTORY_PICTURES);
                                             
-			 if (!imageStorageDir.exists()) {
-				// Create AndroidExampleFolder at sdcard
-				 imageStorageDir.mkdirs();
-			  }
 		
+		imageStorageDir.mkdirs();
+				
  		File file = new File(
-				    imageStorageDir + File.separator + "IMG_"
+				    imageStorageDir.getAbsolutePath() + File.separator + "IMG_"
 				    + String.valueOf(System.currentTimeMillis()) 
 				    + ".jpg");
 
