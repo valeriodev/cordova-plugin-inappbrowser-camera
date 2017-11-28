@@ -763,7 +763,7 @@ public class InAppBrowser extends CordovaPlugin {
 				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
 			    } catch (IOException ex) {
 				// Error occurred while creating the File
-				Log.d(LOG_TAG, "Unable to create Image File");
+				LOG.d(LOG_TAG, "Unable to create Image File");
 			    }
 
 			    // Continue only if the File was successfully created
@@ -1031,6 +1031,9 @@ public class InAppBrowser extends CordovaPlugin {
 	
 	@Override
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	
+	Uri result=null;
+	
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
         if (requestCode != FILECHOOSER_REQUESTCODE_LOLLIPOP || mFilePathCallback == null) {
