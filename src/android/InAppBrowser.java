@@ -1051,6 +1051,41 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			 LOG.d(LOG_TAG, "There is no data take from photo");
 			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
+			    
+		        File file = new File(mCameraPhotoPath);
+			if(file.exists())      
+				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
+			else
+				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
+			
+			mCameraPhotoPath = mCameraPhotoPath.replace("file://", "file:");
+			    
+			 file = new File(mCameraPhotoPath);
+			if(file.exists())      
+				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
+			else
+				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
+			    
+		
+			      
+			mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
+			    
+			 file = new File(mCameraPhotoPath);
+			if(file.exists())      
+				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
+			else
+				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
+			    
+			mCameraPhotoPath = mCameraPhotoPath.replace("file:", "file://");
+			    
+			 file = new File(mCameraPhotoPath);
+			if(file.exists())      
+				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
+			else
+				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
+			    
+			  
+			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
