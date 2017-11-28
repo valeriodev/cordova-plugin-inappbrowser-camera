@@ -1051,6 +1051,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			 LOG.d(LOG_TAG, "There is no data take from photo");
 			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
+			mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
