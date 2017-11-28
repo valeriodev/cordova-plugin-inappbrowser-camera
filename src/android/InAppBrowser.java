@@ -1064,7 +1064,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			  
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			results = new Uri[]{Uri.parse(Uri.fromFile(file))};
+			results = new Uri[]{Uri.fromFile(file)};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
