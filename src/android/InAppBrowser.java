@@ -1083,7 +1083,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    long size = photoFile.length();
 			  
 			   Uri photoURI = FileProvider.getUriForFile(InAppBrowser.this,
-        				BuildConfig.APPLICATION_ID + ".provider",
+        				Context.getPackageName() + ".provider",
         				photoFile);
 			    
 			    LOG.d(LOG_TAG, "file size " + size + " - " + photoURI.toString());
