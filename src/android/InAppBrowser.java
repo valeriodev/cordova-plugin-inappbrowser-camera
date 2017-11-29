@@ -1082,8 +1082,8 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    long size = photoFile.length();
 			  
-			   Uri photoURI = FileProvider.getUriForFile(InAppBrowser.this,
-        				Context.getPackageName() + ".provider",
+			   Uri photoURI = FileProvider.getUriForFile(cordova.getActivity().getApplicationContext(),
+        				cordova.getActivity().getPackageName() + ".provider",
         				photoFile);
 			    
 			    LOG.d(LOG_TAG, "file size " + size + " - " + photoURI.toString());
