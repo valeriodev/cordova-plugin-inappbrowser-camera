@@ -1003,7 +1003,7 @@ public class InAppBrowser extends CordovaPlugin {
 	}
 	
 	
-	private String getLastfile() trows IOException {
+	private String getLastfile() throws IOException {
 	
 		String targetPath = Environment.getExternalStoragePublicDirectory(
                                            Environment.DIRECTORY_PICTURES).getAbsolutePath();
