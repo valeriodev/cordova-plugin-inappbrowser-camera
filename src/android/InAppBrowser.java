@@ -20,6 +20,7 @@ package org.apache.cordova.inappbrowser;
 
 import java.io.File;
 import java.io.IOException;
+import android.support.v4.content.FileProvider;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
