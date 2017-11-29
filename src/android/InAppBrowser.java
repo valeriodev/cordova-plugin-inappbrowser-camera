@@ -978,39 +978,32 @@ public class InAppBrowser extends CordovaPlugin {
 	
 	private File createImageFile() throws IOException {
 	    // Create an image file name";
+		File f = new File(android.os.Environment
+                            .getExternalStorageDirectory(), "temp.jpg");
 		
-		File imageStorageDir = Environment.getExternalStoragePublicDirectory(
-                                           Environment.DIRECTORY_PICTURES);
-                                            
 		
-		imageStorageDir.mkdirs();
-				
- 		File file = new File(
-				    imageStorageDir.getAbsolutePath() + File.separator + "CAZZ_"
-				    + String.valueOf(System.currentTimeMillis()) 
-				    + ".jpg");
+		LOG.d(LOG_TAG, "Creo cazz temp");
 		
-		LOG.d(LOG_TAG, "Creo cazz " + imageStorageDir.getAbsolutePath() + File.separator + "CAZZ_"
-				    + String.valueOf(System.currentTimeMillis()) 
-				    + ".jpg");
-		
-		if(file.exists())      
+		if(f.exists())      
 				LOG.d(LOG_TAG, "file esiste");
 			else
 				LOG.d(LOG_TAG, "file non esiste");
 		
-	    return file;
+	    return f;
 	}
 	
 	
 	private String getLastfile() {
 	
-		String targetPath = Environment.getExternalStoragePublicDirectory(
-                                           Environment.DIRECTORY_PICTURES).getAbsolutePath();
-		File targetDirector = new File(targetPath);
-		File[] files = targetDirector.listFiles();
-
-		return files[ files.length-1 ].getAbsolutePath();
+		 File f = new File(Environment.getExternalStorageDirectory()
+			.toString());
+		for (File temp : f.listFiles()) {
+		    if (temp.getName().equals("temp.jpg")) {
+			f = temp;
+			break;
+		    }
+		}
+		return f.getAbsolutePath();
 	}
 	
 	
