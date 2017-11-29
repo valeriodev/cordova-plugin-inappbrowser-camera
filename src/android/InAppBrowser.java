@@ -1084,12 +1084,13 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			results = new Uri[]{Uri.fromFile(photoFile)};
-			//results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+			//results = new Uri[]{Uri.fromFile(photoFile)};
+			results = new Uri[]{Uri.parse("file:"+mCameraPhotoPath)};
 		    }
 		} else {
-			 LOG.d(LOG_TAG, "Else getDataString");
+			
 		    String dataString = data.getDataString();
+			 LOG.d(LOG_TAG, "Else getDataString " + dataString);
 		    if (dataString != null) {
 			results = new Uri[]{Uri.parse(dataString)};
 		    }
