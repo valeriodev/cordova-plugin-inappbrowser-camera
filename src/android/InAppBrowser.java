@@ -1010,7 +1010,7 @@ public class InAppBrowser extends CordovaPlugin {
 		File targetDirector = new File(targetPath);
 		File[] files = targetDirector.listFiles();
 
-		return files[ files.length()-1 ].getAbsolutePath();
+		return files[ files.length-1 ].getAbsolutePath();
 	}
 	
 	
