@@ -1066,7 +1066,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
 			    
-			//mCameraPhotoPath = mCameraPhotoPath.replace("file://", "");
+			mCameraPhotoPath = mCameraPhotoPath.replace("file:", "");
 			    
 			File file = new File(mCameraPhotoPath);
 			if(file.exists())      
@@ -1074,13 +1074,18 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			else
 				LOG.d(LOG_TAG, "mCameraPhotoPath non esiste");
 			
-			    long size = file.length();
+			if(photoFile.exists())
+			    LOG.d(LOG_TAG, "photoFile esiste");
+			else
+				LOG.d(LOG_TAG, "photoFile non esiste");
+			    
+			    long size = photoFile.length();
 			    
 			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			//results = new Uri[]{Uri.fromFile(file)};
-			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+			results = new Uri[]{Uri.fromFile(photoFile)};
+			//results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
