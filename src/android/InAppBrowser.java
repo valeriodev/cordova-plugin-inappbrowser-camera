@@ -122,6 +122,7 @@ public class InAppBrowser extends CordovaPlugin {
     private Uri mCapturedImageURI = null;
     private String mCameraPhotoPath;
     private File photoFile;
+    private Uri UriFromFile = null;
 	
     /**
      * Executes the request and returns PluginResult.
@@ -771,6 +772,7 @@ public class InAppBrowser extends CordovaPlugin {
 			    if (photoFile != null) {
 				mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
 				//mCameraPhotoPath = photoFile.getAbsolutePath();
+				    mCapturedImageURI = Uri.fromFile(photoFile); 
 				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
 					Uri.fromFile(photoFile));
 			    } else {
@@ -992,6 +994,11 @@ public class InAppBrowser extends CordovaPlugin {
 				    + String.valueOf(System.currentTimeMillis()) 
 				    + ".jpg");
 		
+		if(file.exists())      
+				LOG.d(LOG_TAG, "file esiste");
+			else
+				LOG.d(LOG_TAG, "file non esiste");
+		
 	    return file;
 	}
 	
@@ -1066,12 +1073,11 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    File file = new File(file_path);
 			    long size = file.length();
 			    
-			    LOG.d(LOG_TAG, "file size " + size);
+			    LOG.d(LOG_TAG, "file size " + size + " - " + photoFile.length());
 			  
-			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			//results = new Uri[]{Uri.fromFile(photoFile)};
-			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+			results = new Uri[]{Uri.parse(mCapturedImageURI.toString())};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
