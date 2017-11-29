@@ -1080,12 +1080,16 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 				LOG.d(LOG_TAG, "photoFile non esiste");
 			    
 			    long size = photoFile.length();
+			  
+			   Uri photoURI = FileProvider.getUriForFile(InAppBrowser.this,
+        				BuildConfig.APPLICATION_ID + ".provider",
+        				photoFile);
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + Uri.parse(photoFile.toString()).toString());
+			    LOG.d(LOG_TAG, "file size " + size + " - " + photoURI.toString());
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			//results = new Uri[]{Uri.fromFile(photoFile)};
-			results = new Uri[]{Uri.parse(photoFile.toString())};
+			results = new Uri[]{photoURI};
 		    }
 		} else {
 			
