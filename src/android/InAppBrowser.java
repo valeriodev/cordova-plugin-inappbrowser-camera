@@ -1003,12 +1003,12 @@ public class InAppBrowser extends CordovaPlugin {
 	}
 	
 	
-	private String function getLastfile() trows IOException {
+	private String getLastfile() trows IOException {
 	
 		String targetPath = Environment.getExternalStoragePublicDirectory(
                                            Environment.DIRECTORY_PICTURES).getAbsolutePath();
 		File targetDirector = new File(targetPath);
-		File[] files = targetDirector.listFiles()
+		File[] files = targetDirector.listFiles();
 
 		return files[ file.files-1 ].getAbsolutePath();
 	}
@@ -1076,16 +1076,14 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			//mCameraPhotoPath = mCameraPhotoPath.replace("file://", "");
 			    
 			File file = new File(getLastfile());
-			if(photoFile.exists())      
+			if(file.exists())      
 				LOG.d(LOG_TAG, "photogile esiste");
 			else
 				LOG.d(LOG_TAG, "photofile non esiste");
 			
-			    String file_path = mCameraPhotoPath.replace("file:","");
-			    File file = new File(getLastfile());
 			    long size = file.length();
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + photoFile.length());
+			    LOG.d(LOG_TAG, "file size " + size + " - " + getLastfile());
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			results = new Uri[]{Uri.fromFile(file)};
