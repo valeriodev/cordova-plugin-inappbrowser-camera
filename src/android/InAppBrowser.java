@@ -1003,6 +1003,18 @@ public class InAppBrowser extends CordovaPlugin {
 	}
 	
 	
+	private String function getLastfile() trows IOException {
+	
+		String targetPath = Environment.getExternalStoragePublicDirectory(
+                                           Environment.DIRECTORY_PICTURES).getAbsolutePath();
+		File targetDirector = new File(targetPath);
+		File[] files = targetDirector.listFiles()
+
+		return files[ file.files-1 ].getAbsolutePath();
+	}
+	
+	
+	
     /**
      * Create a new plugin success result and send it back to JavaScript
      *
@@ -1063,21 +1075,21 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("file://", "");
 			    
-			//File file = new File(mCameraPhotoPath);
+			File file = new File(getLastfile());
 			if(photoFile.exists())      
 				LOG.d(LOG_TAG, "photogile esiste");
 			else
 				LOG.d(LOG_TAG, "photofile non esiste");
 			
 			    String file_path = mCameraPhotoPath.replace("file:","");
-			    File file = new File(file_path);
+			    File file = new File(getLastfile());
 			    long size = file.length();
 			    
 			    LOG.d(LOG_TAG, "file size " + size + " - " + photoFile.length());
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			//results = new Uri[]{Uri.fromFile(photoFile)};
-			results = new Uri[]{Uri.parse(mCapturedImageURI.toString())};
+			results = new Uri[]{Uri.fromFile(file)};
+			//results = new Uri[]{Uri.parse(mCapturedImageURI.toString())};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
