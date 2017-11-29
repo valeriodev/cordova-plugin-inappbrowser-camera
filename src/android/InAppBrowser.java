@@ -769,8 +769,8 @@ public class InAppBrowser extends CordovaPlugin {
 
 			    // Continue only if the File was successfully created
 			    if (photoFile != null) {
-				//mCameraPhotoPath = "file://" + photoFile.getAbsolutePath();
-				mCameraPhotoPath = photoFile.getAbsolutePath();
+				mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
+				//mCameraPhotoPath = photoFile.getAbsolutePath();
 				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
 					Uri.fromFile(photoFile));
 			    } else {
@@ -1043,7 +1043,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
             return;
         }
 
-        Uri[] results = null;
+        Uri[] results = new Uri[1];
 
         // Check that the response is a good one
         if (resultCode == Activity.RESULT_OK) {
@@ -1058,14 +1058,20 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			//File file = new File(mCameraPhotoPath);
 			if(photoFile.exists())      
-				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
+				LOG.d(LOG_TAG, "photogile esiste");
 			else
-				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
+				LOG.d(LOG_TAG, "photofile non esiste");
+			
+			    String file_path = mCameraPhotoPath.replace("file:","");
+			    File file = new File(file_path);
+			    long size = file.length();
 			    
+			    LOG.d(LOG_TAG, "file size " + size);
 			  
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			results = new Uri[]{Uri.fromFile(photoFile)};
+			//results = new Uri[]{Uri.fromFile(photoFile)};
+			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
