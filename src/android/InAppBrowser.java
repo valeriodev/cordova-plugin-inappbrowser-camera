@@ -1068,19 +1068,19 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("file://", "");
 			    
-			File file = new File(getLastfile());
+			File file = new File(mCameraPhotoPath);
 			if(file.exists())      
-				LOG.d(LOG_TAG, "photogile esiste");
+				LOG.d(LOG_TAG, "mCameraPhotoPath esiste");
 			else
-				LOG.d(LOG_TAG, "photofile non esiste");
+				LOG.d(LOG_TAG, "mCameraPhotoPath non esiste");
 			
 			    long size = file.length();
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + getLastfile());
+			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			results = new Uri[]{Uri.fromFile(file)};
-			//results = new Uri[]{Uri.parse(mCapturedImageURI.toString())};
+			//results = new Uri[]{Uri.fromFile(file)};
+			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
