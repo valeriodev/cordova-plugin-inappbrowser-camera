@@ -1081,11 +1081,11 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    long size = photoFile.length();
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
+			    LOG.d(LOG_TAG, "file size " + size + " - " + photoFile.toString());
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			//results = new Uri[]{Uri.fromFile(photoFile)};
-			results = new Uri[]{Uri.parse("file:"+mCameraPhotoPath)};
+			results = new Uri[]{Uri.parse(photoFile.toString())};
 		    }
 		} else {
 			
