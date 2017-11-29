@@ -1081,7 +1081,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    long size = photoFile.length();
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + photoFile.toString());
+			    LOG.d(LOG_TAG, "file size " + size + " - " + Uri.parse(photoFile.toString()).toString());
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			//results = new Uri[]{Uri.fromFile(photoFile)};
@@ -1090,7 +1090,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		} else {
 			
 		    String dataString = data.getDataString();
-			 LOG.d(LOG_TAG, "Else getDataString " + dataString);
+			 LOG.d(LOG_TAG, "Else getDataString " + Uri.parse(dataString).toString());
 		    if (dataString != null) {
 			results = new Uri[]{Uri.parse(dataString)};
 		    }
