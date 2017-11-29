@@ -121,6 +121,7 @@ public class InAppBrowser extends CordovaPlugin {
     private final static int FILECHOOSER_REQUESTCODE_LOLLIPOP = 2;
     private Uri mCapturedImageURI = null;
     private String mCameraPhotoPath;
+    private File photoFile;
 	
     /**
      * Executes the request and returns PluginResult.
@@ -757,7 +758,7 @@ public class InAppBrowser extends CordovaPlugin {
 			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			//if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 			    // Create the File where the photo should go
-			    File photoFile = null;
+			    //File photoFile = null;
 			    try {
 				photoFile = createImageFile();
 				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
@@ -1055,8 +1056,8 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("file://", "");
 			    
-			File file = new File(mCameraPhotoPath);
-			if(file.exists())      
+			//File file = new File(mCameraPhotoPath);
+			if(photoFile.exists())      
 				LOG.d(LOG_TAG, mCameraPhotoPath + " esiste");
 			else
 				LOG.d(LOG_TAG, mCameraPhotoPath + " non esiste");
@@ -1064,7 +1065,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			  
 			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			results = new Uri[]{Uri.fromFile(file)};
+			results = new Uri[]{Uri.fromFile(photoFile)};
 		    }
 		} else {
 			 LOG.d(LOG_TAG, "Else getDataString");
