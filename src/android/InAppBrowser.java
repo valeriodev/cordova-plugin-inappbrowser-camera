@@ -23,6 +23,7 @@ import java.io.IOException;
 import android.support.v4.content.FileProvider;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.provider.Browser;
 import android.content.res.Resources;
@@ -60,6 +61,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.content.pm.PackageManager;
 import android.app.Activity;
+import android.database.Cursor;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
