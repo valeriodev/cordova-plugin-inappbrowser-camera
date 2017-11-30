@@ -1107,10 +1107,10 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    long size = photoFile.length();
 			  
-			    Uri photoURI = getUriFromPath(mCameraPhotoPath);
+			    //Uri photoURI = getUriFromPath(mCameraPhotoPath);
 			    //Uri photoURI2 = getUriFromPath("" + mCameraPhotoPath);
 			    
-			    results = new Uri[]{photoURI};
+			    //results = new Uri[]{photoURI};
 			    
 			    /*
 			   Uri photoURI = FileProvider.getUriForFile(this.cordova.getActivity().getApplicationContext(),
@@ -1120,7 +1120,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			   
 			    mCameraPhotoPath = "content://" + mCameraPhotoPath;
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
+			    
 			  
 			    Uri localUri = Uri.fromFile(file);
 			    Intent localIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, localUri);
@@ -1132,7 +1132,10 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    LOG.d(LOG_TAG, "Results - " + results.toString());
 			    */
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			//results = new Uri[]{Uri.fromFile(photoFile)};
+			    
+			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
+			    
+			results = new Uri[]{Uri.fromFile(photoFile)};
 			//results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
