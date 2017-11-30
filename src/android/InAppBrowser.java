@@ -1095,7 +1095,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    this.cordova.getActivity().sendBroadcast(localIntent);
 
 			    Uri resultA = Uri.fromFile(file);
-			    results = new Uri[]{resultA});			    
+			    results = new Uri[]{resultA};			    
 			    
 			    LOG.d(LOG_TAG, "Results - " + results.toString());
 			    
