@@ -1082,15 +1082,17 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    long size = photoFile.length();
 			  
-			   Uri photoURI = FileProvider.getUriForFile(cordova.getActivity().getApplicationContext(),
+			   /*Uri photoURI = FileProvider.getUriForFile(cordova.getActivity().getApplicationContext(),
         				cordova.getActivity().getPackageName() + ".provider",
-        				photoFile);
+        				photoFile);*/
 			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + photoURI.toString());
+			    mCameraPhotoPath = "content://" + mCameraPhotoPath;
+			    
+			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
 			  
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			//results = new Uri[]{Uri.fromFile(photoFile)};
-			results = new Uri[]{photoURI};
+			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
 			
