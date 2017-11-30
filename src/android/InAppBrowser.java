@@ -1044,6 +1044,25 @@ public class InAppBrowser extends CordovaPlugin {
      */
 	
 	
+	private Uri getUriFromPath(String filePath) {
+    long photoId;
+    Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+
+    String[] projection = {MediaStore.Images.ImageColumns._ID};
+    // TODO This will break if we have no matching item in the MediaStore.
+    Cursor cursor = getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+    cursor.moveToFirst();
+
+    int columnIndex = cursor.getColumnIndex(projection[0]);
+    photoId = cursor.getLong(columnIndex);
+
+    cursor.close();
+    return Uri.parse(photoUri.toString() + "/" + photoId);
+}
+	
+	
+	
+	
 	@Override
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	 LOG.d(LOG_TAG, "onActivityResult");
@@ -1082,11 +1101,17 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    long size = photoFile.length();
 			  
+			    Uri photoURI = getUriFromPath(mCameraPhotoPath);
+			    //Uri photoURI2 = getUriFromPath("" + mCameraPhotoPath);
+			    
+			    results = new Uri[]{photoURI};
+			    
+			    /*
 			   Uri photoURI = FileProvider.getUriForFile(this.cordova.getActivity().getApplicationContext(),
         				this.cordova.getActivity().getPackageName() + ".provider",
         				photoFile);
 			    results = new Uri[]{photoURI};
-			    /*
+			   
 			    mCameraPhotoPath = "content://" + mCameraPhotoPath;
 			    
 			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
