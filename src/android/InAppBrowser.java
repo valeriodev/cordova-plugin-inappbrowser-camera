@@ -1045,6 +1045,10 @@ public class InAppBrowser extends CordovaPlugin {
      * @param intent the data from android file chooser
      */
 	
+	private ContentResolver getContentResolver(){
+    return cordova.getActivity().getContentResolver();
+}
+	
 	
 	private Uri getUriFromPath(String filePath) {
     long photoId;
