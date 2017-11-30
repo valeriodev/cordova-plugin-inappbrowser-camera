@@ -1090,9 +1090,18 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			    
 			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
 			  
+			    Uri localUri = Uri.fromFile(file);
+			    Intent localIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, localUri);
+			    this.cordova.getActivity().sendBroadcast(localIntent);
+
+			    Uri resultA = Uri.fromFile(file);
+			    results = new Uri[]{resultA});			    
+			    
+			    LOG.d(LOG_TAG, "Results - " + results.toString());
+			    
 			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
 			//results = new Uri[]{Uri.fromFile(photoFile)};
-			results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+			//results = new Uri[]{Uri.parse(mCameraPhotoPath)};
 		    }
 		} else {
 			
