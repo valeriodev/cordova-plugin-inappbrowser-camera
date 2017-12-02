@@ -20,6 +20,7 @@ package org.apache.cordova.inappbrowser;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import android.support.v4.content.FileProvider;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -62,6 +63,7 @@ import android.widget.RelativeLayout;
 import android.content.pm.PackageManager;
 import android.app.Activity;
 import android.database.Cursor;
+import android.widget.Toast;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
@@ -126,6 +128,13 @@ public class InAppBrowser extends CordovaPlugin {
     private String mCameraPhotoPath;
     private File photoFile;
     private Uri UriFromFile = null;
+	
+    private static final int INPUT_FILE_REQUEST_CODE = 1;
+    private static final int FILECHOOSER_RESULTCODE = 1;
+    private static final String TAG = "InAppBrowser";
+    
+    private ValueCallback<Uri> mUploadMessage;
+    
 	
     /**
      * Executes the request and returns PluginResult.
@@ -748,153 +757,118 @@ public class InAppBrowser extends CordovaPlugin {
                 // File Chooser Implemented ChromeClient
                 inAppWebView.setWebChromeClient(new InAppChromeClient(thatWebView) {
                     
-		 // For Android 5.0
-		    public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePath, WebChromeClient.FileChooserParams fileChooserParams) {
+			 // For Android 5.0
+			public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePath, WebChromeClient.FileChooserParams fileChooserParams) {
+			    // Double check that we don't have any existing callbacks
+			    if (mFilePathCallback != null) {
+				mFilePathCallback.onReceiveValue(null);
+			    }
+			    mFilePathCallback = filePath;
 
+			    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+				// Create the File where the photo should go
+				File photoFile = null;
+				try {
+				    photoFile = createImageFile();
+				    takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
+				} catch (IOException ex) {
+				    // Error occurred while creating the File
+				    Log.e(TAG, "Unable to create Image File", ex);
+				}
 
-
-			// Double check that we don't have any existing callbacks
-			if (mFilePathCallback != null) {
-			    mFilePathCallback.onReceiveValue(null);
-			}
-			mFilePathCallback = filePath;
-
-			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			//if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-			    // Create the File where the photo should go
-			    //File photoFile = null;
-			    try {
-				photoFile = createImageFile();
-				takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
-			    } catch (IOException ex) {
-				// Error occurred while creating the File
-				LOG.d(LOG_TAG, "cazzz");
+				// Continue only if the File was successfully created
+				if (photoFile != null) {
+				    mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
+				    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+					    Uri.fromFile(photoFile));
+				} else {
+				    takePictureIntent = null;
+				}
 			    }
 
-			    // Continue only if the File was successfully created
-			    if (photoFile != null) {
-				mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
-				//mCameraPhotoPath = photoFile.getAbsolutePath();
-				    mCapturedImageURI = Uri.fromFile(photoFile); 
-				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-					Uri.fromFile(photoFile));
+			    Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+			    contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+			    contentSelectionIntent.setType("image/*");
+
+			    Intent[] intentArray;
+			    if (takePictureIntent != null) {
+				intentArray = new Intent[]{takePictureIntent};
 			    } else {
-				takePictureIntent = null;
+				intentArray = new Intent[0];
 			    }
-			//}
 
-			Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-			contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-			contentSelectionIntent.setType("image/*");
+			    Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+			    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+			    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+			    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-			Intent[] intentArray;
-			if (takePictureIntent != null) {
-			    intentArray = new Intent[]{takePictureIntent};
-			} else {
-			    intentArray = new Intent[0];
+			    startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+
+			    return true;
+
 			}
 
-			Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-			chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-			chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+			// openFileChooser for Android 3.0+
+			public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
 
-			cordova.startActivityForResult(InAppBrowser.this, chooserIntent, FILECHOOSER_REQUESTCODE_LOLLIPOP);
+			    mUploadMessage = uploadMsg;
+			    // Create AndroidExampleFolder at sdcard
+			    // Create AndroidExampleFolder at sdcard
 
-			return true;
+			    File imageStorageDir = new File(
+				    Environment.getExternalStoragePublicDirectory(
+					    Environment.DIRECTORY_PICTURES)
+				    , "Photo Folder");
 
-		    }
-		
-		    // For Android 5.0+
-		    public boolean onShowFileChooser_old2 (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
-		    {
-			LOG.d(LOG_TAG, "File Chooser 5.0+ valeriodev");
-			// If callback exists, finish it.
-			if(mUploadCallbackLollipop != null) {
-			    mUploadCallbackLollipop.onReceiveValue(null);
-			}
-			mUploadCallbackLollipop = filePathCallback;
-
-			 // Create File Chooser Intent
-                        Intent content = new Intent(Intent.ACTION_GET_CONTENT);
-                        content.addCategory(Intent.CATEGORY_OPENABLE);
-			content.setType("image/*");
-			    
-			    
-			File imageStorageDir = new File(
-                                           Environment.getExternalStoragePublicDirectory(
-                                           Environment.DIRECTORY_PICTURES)
-                                           , "InAppCamera");
-                                            
-			 if (!imageStorageDir.exists()) {
+			    if (!imageStorageDir.exists()) {
 				// Create AndroidExampleFolder at sdcard
-				 imageStorageDir.mkdirs();
-			  }
-                     
-                  	  // Create camera captured image file path and name 
-			 File file = new File(
+				imageStorageDir.mkdirs();
+			    }
+
+			    // Create camera captured image file path and name
+			    File file = new File(
 				    imageStorageDir + File.separator + "IMG_"
-				    + String.valueOf(System.currentTimeMillis()) 
-				    + ".jpg");
-			    
-                        LOG.d(LOG_TAG, imageStorageDir + File.separator + "IMG_"
-				    + String.valueOf(System.currentTimeMillis()) 
-				    + ".jpg");
-			
-                        mCapturedImageURI = Uri.fromFile(file); 
-			mCameraPhotoPath = "file:" + file.getAbsolutePath();
-			
-			Intent chooserIntent = Intent.createChooser(content, "Select File");
-			final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
-			    
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Parcelable[] { captureIntent });
-			
-			// Run cordova startActivityForResult
-			cordova.startActivityForResult(InAppBrowser.this, chooserIntent, FILECHOOSER_REQUESTCODE_LOLLIPOP);
-			return true;
-		    }
-			
-			
-		   // For Android 5.0+
-                    public boolean onShowFileChooser_old (WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams)
-                    {
-                        LOG.d(LOG_TAG, "File Chooser 5.0+");
-                        // If callback exists, finish it.
-                        if(mUploadCallbackLollipop != null) {
-                            mUploadCallbackLollipop.onReceiveValue(null);
-                        }
-                        mUploadCallbackLollipop = filePathCallback;
+					    + String.valueOf(System.currentTimeMillis())
+					    + ".jpg");
+			    Log.d("File", "File: " + file);
+			    mCapturedImageURI = Uri.fromFile(file);
 
-                        // Create File Chooser Intent
-                        Intent content = new Intent(Intent.ACTION_GET_CONTENT);
-                        content.addCategory(Intent.CATEGORY_OPENABLE);
-                        content.setType("*/*");
+			    // Camera capture image intent
+			    final Intent captureIntent = new Intent(
+				    android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
-                        // Run cordova startActivityForResult
-                        cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), FILECHOOSER_REQUESTCODE_LOLLIPOP);
-                        return true;
-                    }
+			    captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
 
-                    // For Android 4.1+
-                    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture)
-                    {
-                        LOG.d(LOG_TAG, "File Chooser 4.1+");
-                        // Call file chooser for Android 3.0+
-                        openFileChooser(uploadMsg, acceptType);
-                    }
+			    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+			    i.addCategory(Intent.CATEGORY_OPENABLE);
+			    i.setType("image/*");
 
-                    // For Android 3.0+
-                    public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType)
-                    {
-                        LOG.d(LOG_TAG, "File Chooser 3.0+");
-                        mUploadCallback = uploadMsg;
-                        Intent content = new Intent(Intent.ACTION_GET_CONTENT);
-                        content.addCategory(Intent.CATEGORY_OPENABLE);
+			    // Create file chooser intent
+			    Intent chooserIntent = Intent.createChooser(i, "Image Chooser");
 
-                        // run startActivityForResult
-                        cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), FILECHOOSER_REQUESTCODE);
-                    }
+			    // Set camera intent to file chooser
+			    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS
+				    , new Parcelable[]{captureIntent});
+
+			    // On select image call onActivityResult method of activity
+			    startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
+
+
+			}
+
+			// openFileChooser for Android < 3.0
+			public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+			    openFileChooser(uploadMsg, "");
+			}
+
+			//openFileChooser for other Android versions
+			public void openFileChooser(ValueCallback<Uri> uploadMsg,
+						    String acceptType,
+						    String capture) {
+
+			    openFileChooser(uploadMsg, acceptType);
+			}
 
                 });
                 WebViewClient client = new InAppBrowserClient(thatWebView, edittext);
@@ -978,36 +952,22 @@ public class InAppBrowser extends CordovaPlugin {
         this.cordova.getActivity().runOnUiThread(runnable);
         return "";
     }
+
 	
-	private File createImageFile() throws IOException {
-	    // Create an image file name";
-		File f = new File(android.os.Environment
-                            .getExternalStorageDirectory(), "temp.jpg");
-		
-		
-		LOG.d(LOG_TAG, "Creo cazz temp");
-		
-		if(f.exists())      
-				LOG.d(LOG_TAG, "file esiste");
-			else
-				LOG.d(LOG_TAG, "file non esiste");
-		
-	    return f;
-	}
-	
-	
-	private String getLastfile() {
-	
-		 File f = new File(Environment.getExternalStorageDirectory()
-			.toString());
-		for (File temp : f.listFiles()) {
-		    if (temp.getName().equals("temp.jpg")) {
-			f = temp;
-			break;
-		    }
-		}
-		return f.getAbsolutePath();
-	}
+      private File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment.getExternalStoragePublicDirectory(
+			Environment.DIRECTORY_PICTURES);
+		File imageFile = File.createTempFile(
+			imageFileName,  /* prefix */
+			".jpg",         /* suffix */
+			storageDir      /* directory */
+		);
+		return imageFile;
+	    }
+
 	
 	
 	
@@ -1045,173 +1005,71 @@ public class InAppBrowser extends CordovaPlugin {
      * @param intent the data from android file chooser
      */
 	
-	private ContentResolver getContentResolver(){
-    return cordova.getActivity().getContentResolver();
-}
-	
-	
-	private Uri getUriFromPath(String filePath) {
-    long photoId;
-    Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-    String[] projection = {MediaStore.Images.ImageColumns._ID};
-    // TODO This will break if we have no matching item in the MediaStore.
-    Cursor cursor = getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
-    cursor.moveToFirst();
-
-    int columnIndex = cursor.getColumnIndex(projection[0]);
-    photoId = cursor.getLong(columnIndex);
-
-    cursor.close();
-    return Uri.parse(photoUri.toString() + "/" + photoId);
-}
-	
-	
-	
-	
-	@Override
-public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	 LOG.d(LOG_TAG, "onActivityResult");
-	Uri result=null;
-	
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-	 LOG.d(LOG_TAG, "(For Android < 5.0)");
-        if (requestCode != FILECHOOSER_REQUESTCODE_LOLLIPOP || mFilePathCallback == null) {
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-
-        Uri[] results = new Uri[1];
-
-        // Check that the response is a good one
-        if (resultCode == Activity.RESULT_OK) {
-		 LOG.d(LOG_TAG, "Activity RESULT OK");
-		if (data == null || data.getDataString() == null) {
-		    // If there is not data, then we may have taken a photo
-			 LOG.d(LOG_TAG, "There is no data take from photo");
-			 LOG.d(LOG_TAG, mCameraPhotoPath);
-		    if (mCameraPhotoPath != null) {
-			    
-			mCameraPhotoPath = mCameraPhotoPath.replace("file:", "");
-			    
-			File file = new File(mCameraPhotoPath);
-			if(file.exists())      
-				LOG.d(LOG_TAG, "mCameraPhotoPath esiste");
-			else
-				LOG.d(LOG_TAG, "mCameraPhotoPath non esiste");
-			
-			if(photoFile.exists())
-			    LOG.d(LOG_TAG, "photoFile esiste");
-			else
-				LOG.d(LOG_TAG, "photoFile non esiste");
-			    
-			    long size = photoFile.length();
-			  
-			    //Uri photoURI = getUriFromPath(mCameraPhotoPath);
-			    //Uri photoURI2 = getUriFromPath("" + mCameraPhotoPath);
-			    
-			    //results = new Uri[]{photoURI};
-			    
-			    /*
-			   Uri photoURI = FileProvider.getUriForFile(this.cordova.getActivity().getApplicationContext(),
-        				this.cordova.getActivity().getPackageName() + ".provider",
-        				photoFile);
-			    results = new Uri[]{photoURI};
-			   
-			    mCameraPhotoPath = "content://" + mCameraPhotoPath;
-			    
-			    
-			  
-			    Uri localUri = Uri.fromFile(file);
-			    Intent localIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, localUri);
-			    this.cordova.getActivity().sendBroadcast(localIntent);
-
-			    Uri resultA = Uri.fromFile(file);
-			    results = new Uri[]{resultA};			    
-			    
-			    LOG.d(LOG_TAG, "Results - " + results.toString());
-			    */
-			//mCameraPhotoPath = mCameraPhotoPath.replace("/0/", "/legacy/");
-			    
-			    LOG.d(LOG_TAG, "file size " + size + " - " + mCameraPhotoPath);
-			    
-			results = new Uri[]{Uri.fromFile(photoFile)};
-			//results = new Uri[]{Uri.parse(mCameraPhotoPath)};
-		    }
-		} else {
-			
-		    String dataString = data.getDataString();
-			 LOG.d(LOG_TAG, "Else getDataString " + Uri.parse(dataString).toString());
-		    if (dataString != null) {
-			results = new Uri[]{Uri.parse(dataString)};
-		    }
-		}
-	    }
-
-        mFilePathCallback.onReceiveValue(results);
-        mFilePathCallback = null;
-
-    } 
-	else {
-            LOG.d(LOG_TAG, "onActivityResult (For Android < 5.0)");
-            // If RequestCode or Callback is Invalid
-            if(requestCode != FILECHOOSER_REQUESTCODE || mUploadCallback == null) {
+            if (requestCode != INPUT_FILE_REQUEST_CODE || mFilePathCallback == null) {
                 super.onActivityResult(requestCode, resultCode, data);
                 return;
             }
 
-            if (null == mUploadCallback) return;
-            result = data == null || resultCode != cordova.getActivity().RESULT_OK ? null : data.getData();
+            Uri[] results = null;
 
-            mUploadCallback.onReceiveValue(result);
-            mUploadCallback = null;
-        }
-
-    return;
-}
-	
-	
-	
-	
-	
-    public void onActivityResult_old(int requestCode, int resultCode, Intent intent) {
-        // For Android >= 5.0
-	Uri result=null;
-	    
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            LOG.d(LOG_TAG, "onActivityResult (For Android >= 5.0)");
-            // If RequestCode or Callback is Invalid
-            if(requestCode != FILECHOOSER_REQUESTCODE_LOLLIPOP || mUploadCallbackLollipop == null) {
-                super.onActivityResult(requestCode, resultCode, intent);
-                return;
+            // Check that the response is a good one
+            if (resultCode == Activity.RESULT_OK) {
+                if (data == null || data.getDataString() == null) {
+                    // If there is not data, then we may have taken a photo
+                    if (mCameraPhotoPath != null) {
+                        results = new Uri[]{Uri.parse(mCameraPhotoPath)};
+                    }
+                } else {
+                    String dataString = data.getDataString();
+                    if (dataString != null) {
+                        results = new Uri[]{Uri.parse(dataString)};
+                    }
+                }
             }
-		
-	    if(intent == null){
-		Uri[] result2 = null;
-		//result2 = new Uri[]{Uri.parse(mCameraPhotoPath)};
-		result2 = new Uri[]{mCapturedImageURI};
-	    	mUploadCallbackLollipop.onReceiveValue(result2);
-	    }
-	    else{
-		mUploadCallbackLollipop.onReceiveValue( WebChromeClient.FileChooserParams.parseResult(resultCode, intent)); 
-		}	
-            mUploadCallbackLollipop = null;
-        }
-        // For Android < 5.0
-        else {
-            LOG.d(LOG_TAG, "onActivityResult (For Android < 5.0)");
-            // If RequestCode or Callback is Invalid
-            if(requestCode != FILECHOOSER_REQUESTCODE || mUploadCallback == null) {
-                super.onActivityResult(requestCode, resultCode, intent);
+            mFilePathCallback.onReceiveValue(results);
+            mFilePathCallback = null;
+
+        } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            if (requestCode != FILECHOOSER_RESULTCODE || mUploadMessage == null) {
+                super.onActivityResult(requestCode, resultCode, data);
                 return;
             }
 
-            if (null == mUploadCallback) return;
-            result = intent == null || resultCode != cordova.getActivity().RESULT_OK ? null : intent.getData();
+            if (requestCode == FILECHOOSER_RESULTCODE) {
 
-            mUploadCallback.onReceiveValue(result);
-            mUploadCallback = null;
+                if (null == this.mUploadMessage) {
+                    return;
+
+                }
+
+                Uri result = null;
+
+                try {
+                    if (resultCode != RESULT_OK) {
+
+                        result = null;
+
+                    } else {
+
+                        // retrieve from the private variable if the intent is null
+                        result = data == null ? mCapturedImageURI : data.getData();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "activity :" + e,
+                            Toast.LENGTH_LONG).show();
+                }
+
+                mUploadMessage.onReceiveValue(result);
+                mUploadMessage = null;
+
+            }
         }
+
+        return;
     }
 
     /**
