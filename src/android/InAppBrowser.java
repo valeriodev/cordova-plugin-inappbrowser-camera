@@ -805,7 +805,7 @@ public class InAppBrowser extends CordovaPlugin {
 			    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
 			    //cordova.startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
-			    cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(contentSelectionIntent, "Select File"), INPUT_FILE_REQUEST_CODE);
+			    cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(chooserIntent , "Select File"), INPUT_FILE_REQUEST_CODE);
 
 			    return true;
 
