@@ -983,7 +983,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
             return;
         }
 
-        Uri[] results = new Uri[1];
+        Uri[] results = null;
 
         // Check that the response is a good one
         if (resultCode == Activity.RESULT_OK) {
@@ -991,11 +991,9 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (data == null || data.getDataString() == null) {
 		    // If there is not data, then we may have taken a photo
 			 LOG.d(LOG_TAG, "There is no data take from photo");
-			 LOG.d(LOG_TAG, mCameraPhotoPath);
 		    if (mCameraPhotoPath != null) {
 			    
 			mCameraPhotoPath = mCameraPhotoPath.replace("file:", "");
-			    
 			File file = new File(mCameraPhotoPath);
 			if(file.exists())      
 				LOG.d(LOG_TAG, "mCameraPhotoPath esiste");
@@ -1005,8 +1003,8 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		        long size = file.length();
 			if(size>0)
 		        	results = new Uri[]{Uri.fromFile(file)};
-			else
-				results = new Uri[1];
+			    
+			    LOG.d(LOG_TAG, "Size " + size);
 		    }
 		} else {
 			
