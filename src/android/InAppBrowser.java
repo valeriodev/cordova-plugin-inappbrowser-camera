@@ -804,7 +804,8 @@ public class InAppBrowser extends CordovaPlugin {
 			    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
 			    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-			    cordova.startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+			    //cordova.startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+			    cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), INPUT_FILE_REQUEST_CODE);
 
 			    return true;
 
@@ -853,7 +854,8 @@ public class InAppBrowser extends CordovaPlugin {
 				    , new Parcelable[]{captureIntent});
 
 			    // On select image call onActivityResult method of activity
-			    cordova.startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
+			    //cordova.startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
+			    cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), FILECHOOSER_RESULTCODE);
 
 
 			}
