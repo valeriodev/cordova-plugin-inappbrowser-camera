@@ -83,6 +83,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.Date;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class InAppBrowser extends CordovaPlugin {
@@ -766,7 +767,7 @@ public class InAppBrowser extends CordovaPlugin {
 			    mFilePathCallback = filePath;
 
 			    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+			    
 				// Create the File where the photo should go
 				File photoFile = null;
 				try {
@@ -774,7 +775,7 @@ public class InAppBrowser extends CordovaPlugin {
 				    takePictureIntent.putExtra("PhotoPath", mCameraPhotoPath);
 				} catch (IOException ex) {
 				    // Error occurred while creating the File
-				    Log.e(TAG, "Unable to create Image File", ex);
+				    LOG.e(TAG, "Unable to create Image File", ex);
 				}
 
 				// Continue only if the File was successfully created
@@ -785,7 +786,7 @@ public class InAppBrowser extends CordovaPlugin {
 				} else {
 				    takePictureIntent = null;
 				}
-			    }
+			    
 
 			    Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
 			    contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -803,7 +804,7 @@ public class InAppBrowser extends CordovaPlugin {
 			    chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
 			    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
-			    startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+			    cordova.startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
 
 			    return true;
 
@@ -831,7 +832,7 @@ public class InAppBrowser extends CordovaPlugin {
 				    imageStorageDir + File.separator + "IMG_"
 					    + String.valueOf(System.currentTimeMillis())
 					    + ".jpg");
-			    Log.d("File", "File: " + file);
+			    LOG.d("File", "File: " + file);
 			    mCapturedImageURI = Uri.fromFile(file);
 
 			    // Camera capture image intent
@@ -852,7 +853,7 @@ public class InAppBrowser extends CordovaPlugin {
 				    , new Parcelable[]{captureIntent});
 
 			    // On select image call onActivityResult method of activity
-			    startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
+			    cordova.startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
 
 
 			}
@@ -1017,7 +1018,7 @@ public class InAppBrowser extends CordovaPlugin {
             Uri[] results = null;
 
             // Check that the response is a good one
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == cordova.getActivity().RESULT_OK) {
                 if (data == null || data.getDataString() == null) {
                     // If there is not data, then we may have taken a photo
                     if (mCameraPhotoPath != null) {
@@ -1049,7 +1050,7 @@ public class InAppBrowser extends CordovaPlugin {
                 Uri result = null;
 
                 try {
-                    if (resultCode != RESULT_OK) {
+                    if (resultCode != cordova.getActivity().RESULT_OK) {
 
                         result = null;
 
@@ -1059,7 +1060,7 @@ public class InAppBrowser extends CordovaPlugin {
                         result = data == null ? mCapturedImageURI : data.getData();
                     }
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "activity :" + e,
+                    Toast.makeText(cordova.getActivity().getApplicationContext(), "activity :" + e,
                             Toast.LENGTH_LONG).show();
                 }
 
